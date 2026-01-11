@@ -82,7 +82,7 @@ const duration2 = (row2.length / 2 * pixelsPerItem) / pixelsPerSecond;
         <span class="title-main">Clawdbot</span>
       </h1>
 
-      <p class="tagline">The AI that actually does things.</p>
+      <p class="tagline" id="tagline">The AI that actually does things.</p>
 
       <p class="description">
         Clears your inbox, sends emails, manages your calendar, checks you in for flights.<br/>
@@ -333,6 +333,38 @@ const duration2 = (row2.length / 2 * pixelsPerItem) / pixelsPerSecond;
           }
         });
       });
+
+      // Easter egg: Dalek mode on lobster hover
+      const lobsterIcon = document.querySelector('.lobster-icon');
+      const tagline = document.getElementById('tagline');
+      const originalTagline = tagline.textContent;
+      let isAnimating = false;
+
+      lobsterIcon.addEventListener('mouseenter', () => {
+        if (isAnimating) return;
+        isAnimating = true;
+
+        // Animate to Dalek text
+        tagline.style.transition = 'opacity 0.2s ease';
+        tagline.style.opacity = '0';
+
+        setTimeout(() => {
+          tagline.textContent = 'EXFOLIATE! EXFOLIATE!';
+          tagline.classList.add('dalek-mode');
+          tagline.style.opacity = '1';
+        }, 200);
+
+        // Revert after 2 seconds
+        setTimeout(() => {
+          tagline.style.opacity = '0';
+          setTimeout(() => {
+            tagline.textContent = originalTagline;
+            tagline.classList.remove('dalek-mode');
+            tagline.style.opacity = '1';
+            isAnimating = false;
+          }, 200);
+        }, 2000);
+      });
     </script>
 
     <!-- What It Does -->
@@ -506,12 +538,24 @@ const duration2 = (row2.length / 2 * pixelsPerItem) / pixelsPerSecond;
     height: 100px;
     margin: 0 auto 24px;
     animation: float 4s ease-in-out infinite;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+
+  .lobster-icon:hover {
+    transform: scale(1.1);
+    animation: none;
   }
 
   .lobster-icon svg {
     width: 100%;
     height: 100%;
     filter: drop-shadow(0 0 20px rgba(255, 77, 77, 0.4));
+    transition: filter 0.3s ease;
+  }
+
+  .lobster-icon:hover svg {
+    filter: drop-shadow(0 0 30px rgba(0, 229, 204, 0.6));
   }
 
   .lobster-icon .eye-glow {
@@ -587,6 +631,18 @@ const duration2 = (row2.length / 2 * pixelsPerItem) / pixelsPerSecond;
     text-transform: uppercase;
     margin-bottom: 20px;
     animation: fadeInUp 0.8s ease-out 0.15s both;
+  }
+
+  .tagline.dalek-mode {
+    color: var(--cyan-bright);
+    animation: shake 0.1s ease-in-out infinite;
+    text-shadow: 0 0 10px var(--cyan-glow);
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-2px); }
+    75% { transform: translateX(2px); }
   }
 
   .description {
