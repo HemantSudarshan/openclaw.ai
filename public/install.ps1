@@ -81,6 +81,17 @@ function Install-Node {
     exit 1
 }
 
+# Check for existing Clawdbot installation
+function Check-ExistingClawdbot {
+    try {
+        $null = Get-Command clawdbot -ErrorAction Stop
+        Write-Host "→ Existing Clawdbot installation detected" -ForegroundColor Yellow
+        return $true
+    } catch {
+        return $false
+    }
+}
+
 # Install Clawdbot
 function Install-Clawdbot {
     Write-Host "→ Installing Clawdbot..." -ForegroundColor Yellow
@@ -88,8 +99,22 @@ function Install-Clawdbot {
     Write-Host "✓ Clawdbot installed" -ForegroundColor Green
 }
 
+# Run doctor for migrations (safe, non-interactive)
+function Run-Doctor {
+    Write-Host "→ Running doctor to migrate settings..." -ForegroundColor Yellow
+    try {
+        clawdbot doctor --non-interactive
+    } catch {
+        # Ignore errors from doctor
+    }
+    Write-Host "✓ Migration complete" -ForegroundColor Green
+}
+
 # Main installation flow
 function Main {
+    # Check for existing installation
+    $isUpgrade = Check-ExistingClawdbot
+
     # Step 1: Node.js
     if (-not (Check-Node)) {
         Install-Node
@@ -106,18 +131,30 @@ function Main {
     # Step 2: Clawdbot
     Install-Clawdbot
 
+    # Step 3: Run doctor for migrations if upgrading
+    if ($isUpgrade) {
+        Run-Doctor
+    }
+
     Write-Host ""
     Write-Host "🦞 Clawdbot installed successfully!" -ForegroundColor Green
     Write-Host ""
-    Write-Host "Run " -NoNewline
-    Write-Host "clawdbot onboard" -ForegroundColor Cyan -NoNewline
-    Write-Host " to set up your assistant."
-    Write-Host ""
 
-    # Ask to run onboard
-    $response = Read-Host "Start setup now? [Y/n]"
-    if ($response -eq "" -or $response -eq "Y" -or $response -eq "y") {
-        clawdbot onboard
+    if ($isUpgrade) {
+        Write-Host "Upgrade complete. Run " -NoNewline
+        Write-Host "clawdbot doctor" -ForegroundColor Cyan -NoNewline
+        Write-Host " to check for additional migrations."
+    } else {
+        Write-Host "Run " -NoNewline
+        Write-Host "clawdbot onboard" -ForegroundColor Cyan -NoNewline
+        Write-Host " to set up your assistant."
+        Write-Host ""
+
+        # Ask to run onboard (new installs only)
+        $response = Read-Host "Start setup now? [Y/n]"
+        if ($response -eq "" -or $response -eq "Y" -or $response -eq "y") {
+            clawdbot onboard
+        }
     }
 }
 

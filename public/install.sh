@@ -97,6 +97,15 @@ install_node() {
     fi
 }
 
+# Check for existing Clawdbot installation
+check_existing_clawdbot() {
+    if command -v clawdbot &> /dev/null; then
+        echo -e "${YELLOW}→${NC} Existing Clawdbot installation detected"
+        return 0
+    fi
+    return 1
+}
+
 # Install Clawdbot
 install_clawdbot() {
     echo -e "${YELLOW}→${NC} Installing Clawdbot..."
@@ -104,8 +113,21 @@ install_clawdbot() {
     echo -e "${GREEN}✓${NC} Clawdbot installed"
 }
 
+# Run doctor for migrations (safe, non-interactive)
+run_doctor() {
+    echo -e "${YELLOW}→${NC} Running doctor to migrate settings..."
+    clawdbot doctor --non-interactive || true
+    echo -e "${GREEN}✓${NC} Migration complete"
+}
+
 # Main installation flow
 main() {
+    # Check for existing installation
+    local is_upgrade=false
+    if check_existing_clawdbot; then
+        is_upgrade=true
+    fi
+
     # Step 1: Homebrew (macOS only)
     install_homebrew
 
@@ -117,17 +139,27 @@ main() {
     # Step 3: Clawdbot
     install_clawdbot
 
+    # Step 4: Run doctor for migrations if upgrading
+    if [[ "$is_upgrade" == "true" ]]; then
+        run_doctor
+    fi
+
     echo ""
     echo -e "${GREEN}${BOLD}🦞 Clawdbot installed successfully!${NC}"
     echo ""
-    echo -e "Run ${CYAN}clawdbot onboard${NC} to set up your assistant."
-    echo ""
 
-    # Ask to run onboard
-    read -p "Start setup now? [Y/n] " -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]; then
-        exec clawdbot onboard
+    if [[ "$is_upgrade" == "true" ]]; then
+        echo -e "Upgrade complete. Run ${CYAN}clawdbot doctor${NC} to check for additional migrations."
+    else
+        echo -e "Run ${CYAN}clawdbot onboard${NC} to set up your assistant."
+        echo ""
+
+        # Ask to run onboard (new installs only)
+        read -p "Start setup now? [Y/n] " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]; then
+            exec clawdbot onboard
+        fi
     fi
 }
 
