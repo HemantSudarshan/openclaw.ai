@@ -709,9 +709,6 @@ resolve_beta_version() {
 
 install_clawdbot() {
     echo -e "${WARN}→${NC} Installing Clawdbot..."
-    if [[ "$SHARP_IGNORE_GLOBAL_LIBVIPS" == "1" ]]; then
-        echo -e "${INFO}i${NC} Using SHARP_IGNORE_GLOBAL_LIBVIPS=1 (avoids sharp source builds against global libvips)"
-    fi
 
     if [[ "$USE_BETA" == "1" ]]; then
         local beta_version=""
