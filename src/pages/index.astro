@@ -184,7 +184,7 @@ const duration2 = (row2.length / 2 * pixelsPerItem) / pixelsPerSecond;
           <div class="code-line comment" id="oneliner-comment"># Works everywhere. Installs everything. You're welcome. 🦞</div>
           <div class="code-line cmd">
             <span class="code-prompt">$</span>
-            <span class="os-cmd">curl -fsSL https://clawd.bot/install.sh | bash</span>
+            <span class="os-cmd">curl -fsSL https://molt.bot/install.sh | bash</span>
             <button class="copy-line-btn" data-cmd="oneliner" title="Copy">
               <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
               <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><polyline points="20 6 9 17 4 12"/></svg>
@@ -216,7 +216,7 @@ const duration2 = (row2.length / 2 * pixelsPerItem) / pixelsPerSecond;
             <div class="code-line comment"># For those who read source code for fun</div>
             <div class="code-line cmd">
               <span class="code-prompt">$</span>
-              <span class="os-cmd-hackable">curl -fsSL https://clawd.bot/install.sh | bash -s -- --install-method git</span>
+              <span class="os-cmd-hackable">curl -fsSL https://molt.bot/install.sh | bash -s -- --install-method git</span>
               <button class="copy-line-btn" data-cmd="hackable-installer" title="Copy">
                 <svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
                 <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><polyline points="20 6 9 17 4 12"/></svg>
@@ -281,12 +281,12 @@ const duration2 = (row2.length / 2 * pixelsPerItem) / pixelsPerSecond;
         pnpm: 'pnpm add -g clawdbot'
       };
 
-      const windowsPsCmd = 'iwr -useb https://clawd.bot/install.ps1 | iex';
-      const windowsPsBetaCmd = '& ([scriptblock]::Create((iwr -useb https://clawd.bot/install.ps1))) -Tag beta';
-      const windowsCmdCmd = 'curl -fsSL https://clawd.bot/install.cmd -o install.cmd && install.cmd && del install.cmd';
-      const windowsCmdBetaCmd = 'curl -fsSL https://clawd.bot/install.cmd -o install.cmd && install.cmd --tag beta && del install.cmd';
+      const windowsPsCmd = 'iwr -useb https://molt.bot/install.ps1 | iex';
+      const windowsPsBetaCmd = '& ([scriptblock]::Create((iwr -useb https://molt.bot/install.ps1))) -Tag beta';
+      const windowsCmdCmd = 'curl -fsSL https://molt.bot/install.cmd -o install.cmd && install.cmd && del install.cmd';
+      const windowsCmdBetaCmd = 'curl -fsSL https://molt.bot/install.cmd -o install.cmd && install.cmd --tag beta && del install.cmd';
       const osCmds = {
-        unix: "curl -fsSL https://clawd.bot/install.sh | bash",
+        unix: "curl -fsSL https://molt.bot/install.sh | bash",
         windows: windowsPsCmd
       };
 
@@ -360,8 +360,8 @@ const duration2 = (row2.length / 2 * pixelsPerItem) / pixelsPerSecond;
         let onelinerCmd;
         if (currentOs === 'unix') {
           onelinerCmd = currentBeta
-            ? "curl -fsSL https://clawd.bot/install.sh | bash -s -- --beta"
-            : "curl -fsSL https://clawd.bot/install.sh | bash";
+            ? "curl -fsSL https://molt.bot/install.sh | bash -s -- --beta"
+            : "curl -fsSL https://molt.bot/install.sh | bash";
         } else if (currentWinShell === 'cmd') {
           onelinerCmd = currentBeta ? windowsCmdBetaCmd : windowsCmdCmd;
         } else {
@@ -369,7 +369,7 @@ const duration2 = (row2.length / 2 * pixelsPerItem) / pixelsPerSecond;
         }
         document.querySelectorAll('.os-cmd').forEach(cmd => cmd.textContent = onelinerCmd);
         // Update hackable OS command for installer mode
-        const hackableOsCmd = "curl -fsSL https://clawd.bot/install.sh | bash -s -- --install-method git";
+        const hackableOsCmd = "curl -fsSL https://molt.bot/install.sh | bash -s -- --install-method git";
         document.querySelectorAll('.os-cmd-hackable').forEach(cmd => cmd.textContent = hackableOsCmd);
         // Update OS indicator text
         osDetected.textContent = osLabels[currentOs];
@@ -484,8 +484,8 @@ const duration2 = (row2.length / 2 * pixelsPerItem) / pixelsPerSecond;
         'oneliner': () => {
           if (currentOs === 'unix') {
             return currentBeta
-              ? "curl -fsSL https://clawd.bot/install.sh | bash -s -- --beta"
-              : "curl -fsSL https://clawd.bot/install.sh | bash";
+              ? "curl -fsSL https://molt.bot/install.sh | bash -s -- --beta"
+              : "curl -fsSL https://molt.bot/install.sh | bash";
           } else if (currentWinShell === 'cmd') {
             return currentBeta ? windowsCmdBetaCmd : windowsCmdCmd;
           } else {
@@ -497,7 +497,7 @@ const duration2 = (row2.length / 2 * pixelsPerItem) / pixelsPerSecond;
           return currentPm === 'npm' ? `npm i -g clawdbot${betaSuffix}` : `pnpm add -g clawdbot${betaSuffix}`;
         },
         'onboard': () => 'clawdbot onboard',
-        'hackable-installer': () => "curl -fsSL https://clawd.bot/install.sh | bash -s -- --install-method git",
+        'hackable-installer': () => "curl -fsSL https://molt.bot/install.sh | bash -s -- --install-method git",
         'clone': () => 'git clone https://github.com/clawdbot/clawdbot.git',
         'build': () => 'cd clawdbot && pnpm install && pnpm run build',
         'hackable-onboard': () => 'pnpm run clawdbot onboard',
@@ -565,7 +565,7 @@ const duration2 = (row2.length / 2 * pixelsPerItem) / pixelsPerSecond;
         <span class="claw-accent">⟩</span> What It Does
       </h2>
       <div class="features-grid">
-        <a href="https://docs.clawd.bot/getting-started" target="_blank" rel="noopener" class="feature-card">
+        <a href="https://docs.molt.bot/getting-started" target="_blank" rel="noopener" class="feature-card">
           <div class="feature-icon"><Icon icon="lucide:home" color="var(--coral-bright)" size={28} /></div>
           <h3 class="feature-title">Runs on Your Machine</h3>
           <p class="feature-desc">Mac, Windows, or Linux. Anthropic, OpenAI, or local models. Private by default—your data stays yours.</p>
@@ -575,22 +575,22 @@ const duration2 = (row2.length / 2 * pixelsPerItem) / pixelsPerSecond;
           <h3 class="feature-title">Any Chat App</h3>
           <p class="feature-desc">Talk to it on WhatsApp, Telegram, Discord, Slack, Signal, or iMessage. Works in DMs and group chats.</p>
         </a>
-        <a href="https://docs.clawd.bot/session" target="_blank" rel="noopener" class="feature-card">
+        <a href="https://docs.molt.bot/session" target="_blank" rel="noopener" class="feature-card">
           <div class="feature-icon"><Icon icon="lucide:brain" color="var(--coral-bright)" size={28} /></div>
           <h3 class="feature-title">Persistent Memory</h3>
           <p class="feature-desc">Remembers you and becomes uniquely yours. Your preferences, your context, your AI.</p>
         </a>
-        <a href="https://docs.clawd.bot/browser" target="_blank" rel="noopener" class="feature-card">
+        <a href="https://docs.molt.bot/browser" target="_blank" rel="noopener" class="feature-card">
           <div class="feature-icon"><Icon icon="lucide:globe" color="var(--coral-bright)" size={28} /></div>
           <h3 class="feature-title">Browser Control</h3>
           <p class="feature-desc">It can browse the web, fill forms, and extract data from any site.</p>
         </a>
-        <a href="https://docs.clawd.bot/bash" target="_blank" rel="noopener" class="feature-card">
+        <a href="https://docs.molt.bot/bash" target="_blank" rel="noopener" class="feature-card">
           <div class="feature-icon"><Icon icon="lucide:terminal" color="var(--coral-bright)" size={28} /></div>
           <h3 class="feature-title">Full System Access</h3>
           <p class="feature-desc">Read and write files, run shell commands, execute scripts. Full access or sandboxed—your choice.</p>
         </a>
-        <a href="https://docs.clawd.bot/skills" target="_blank" rel="noopener" class="feature-card">
+        <a href="https://docs.molt.bot/skills" target="_blank" rel="noopener" class="feature-card">
           <div class="feature-icon"><Icon icon="lucide:puzzle" color="var(--coral-bright)" size={28} /></div>
           <h3 class="feature-title">Skills & Plugins</h3>
           <p class="feature-desc">Extend with community skills or build your own. It can even write its own.</p>
@@ -661,7 +661,7 @@ const duration2 = (row2.length / 2 * pixelsPerItem) / pixelsPerSecond;
         <span class="cta-sub">Join the community</span>
       </a>
 
-      <a href="https://docs.clawd.bot/getting-started" class="cta cta-docs" target="_blank" rel="noopener">
+      <a href="https://docs.molt.bot/getting-started" class="cta cta-docs" target="_blank" rel="noopener">
         <svg class="cta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
           <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
@@ -720,7 +720,7 @@ const duration2 = (row2.length / 2 * pixelsPerItem) / pixelsPerSecond;
     <!-- Footer -->
     <footer class="footer">
       <p>Built by <a href="https://clawd.me" target="_blank" rel="noopener">Molty</a> 🦞, a space lobster AI with a <a href="https://soul.md" target="_blank" rel="noopener">soul</a>, by <a href="https://steipete.me" target="_blank" rel="noopener">Peter Steinberger</a> & <a href="https://github.com/clawdbot/clawdbot#community" target="_blank" rel="noopener">community</a>.</p>
-      <p class="disclaimer">Independent project. Not affiliated with Anthropic.</p>
+      <p class="disclaimer">Moltbot was formerly known as Clawdbot. Independent project, not affiliated with Anthropic.</p>
     </footer>
   </main>
 </Layout>
