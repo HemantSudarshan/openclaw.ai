@@ -1,8 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
-# Clawdbot Installer for macOS and Linux
-# Usage: curl -fsSL --proto '=https' --tlsv1.2 https://clawd.bot/install.sh | bash
+# Moltbot Installer for macOS and Linux
+# Usage: curl -fsSL --proto '=https' --tlsv1.2 https://molt.bot/install.sh | bash
 
 BOLD='\033[1m'
 ACCENT='\033[38;2;255;90;45m'
@@ -16,7 +16,7 @@ ERROR='\033[38;2;226;61;45m'
 MUTED='\033[38;2;139;127;119m'
 NC='\033[0m' # No Color
 
-DEFAULT_TAGLINE="All your chats, one Clawdbot."
+DEFAULT_TAGLINE="All your chats, one Moltbot."
 
 ORIGINAL_PATH="${PATH:-}"
 
@@ -111,7 +111,13 @@ cleanup_clawdbot_bin_conflict() {
     local npm_bin=""
     npm_bin="$(npm_global_bin_dir 2>/dev/null || true)"
     if [[ -n "$npm_bin" && "$bin_path" != "$npm_bin/clawdbot" ]]; then
-        return 1
+        case "$bin_path" in
+            "/opt/homebrew/bin/clawdbot"|"/usr/local/bin/clawdbot")
+                ;;
+            *)
+                return 1
+                ;;
+        esac
     fi
     if [[ -L "$bin_path" ]]; then
         local target=""
@@ -121,6 +127,13 @@ cleanup_clawdbot_bin_conflict() {
             echo -e "${WARN}→${NC} Removed stale clawdbot symlink at ${INFO}${bin_path}${NC}"
             return 0
         fi
+        return 1
+    fi
+    local backup=""
+    backup="${bin_path}.bak-$(date +%Y%m%d-%H%M%S)"
+    if mv "$bin_path" "$backup"; then
+        echo -e "${WARN}→${NC} Moved existing clawdbot binary to ${INFO}${backup}${NC}"
+        return 0
     fi
     return 1
 }
@@ -293,10 +306,10 @@ HELP=0
 
 print_usage() {
     cat <<EOF
-Clawdbot installer (macOS + Linux)
+Moltbot installer (macOS + Linux)
 
 Usage:
-  curl -fsSL --proto '=https' --tlsv1.2 https://clawd.bot/install.sh | bash -s -- [options]
+  curl -fsSL --proto '=https' --tlsv1.2 https://molt.bot/install.sh | bash -s -- [options]
 
 Options:
   --install-method, --method npm|git   Install via npm (default) or from a git checkout
@@ -326,9 +339,9 @@ Environment variables:
   SHARP_IGNORE_GLOBAL_LIBVIPS=0|1    Default: 1 (avoid sharp building against global libvips)
 
 Examples:
-  curl -fsSL --proto '=https' --tlsv1.2 https://clawd.bot/install.sh | bash
-  curl -fsSL --proto '=https' --tlsv1.2 https://clawd.bot/install.sh | bash -s -- --no-onboard
-  curl -fsSL --proto '=https' --tlsv1.2 https://clawd.bot/install.sh | bash -s -- --install-method git --no-onboard
+  curl -fsSL --proto '=https' --tlsv1.2 https://molt.bot/install.sh | bash
+  curl -fsSL --proto '=https' --tlsv1.2 https://molt.bot/install.sh | bash -s -- --no-onboard
+  curl -fsSL --proto '=https' --tlsv1.2 https://molt.bot/install.sh | bash -s -- --install-method git --no-onboard
 EOF
 }
 
@@ -442,7 +455,7 @@ detect_clawdbot_checkout() {
 }
 
 echo -e "${ACCENT}${BOLD}"
-echo "  🦞 Clawdbot Installer"
+echo "  🦞 Moltbot Installer"
 echo -e "${NC}${ACCENT_DIM}  ${TAGLINE}${NC}"
 echo ""
 
@@ -457,7 +470,7 @@ fi
 if [[ "$OS" == "unknown" ]]; then
     echo -e "${ERROR}Error: Unsupported operating system${NC}"
     echo "This installer supports macOS and Linux (including WSL)."
-    echo "For Windows, use: iwr -useb https://clawd.bot/install.ps1 | iex"
+    echo "For Windows, use: iwr -useb https://molt.bot/install.ps1 | iex"
     exit 1
 fi
 
@@ -652,10 +665,10 @@ ensure_clawdbot_bin_link() {
     return 0
 }
 
-# Check for existing Clawdbot installation
+# Check for existing Moltbot installation
 check_existing_clawdbot() {
     if [[ -n "$(type -P clawdbot 2>/dev/null || true)" ]]; then
-        echo -e "${WARN}→${NC} Existing Clawdbot installation detected"
+        echo -e "${WARN}→${NC} Existing Moltbot installation detected"
         return 0
     fi
     return 1
@@ -749,7 +762,7 @@ warn_shell_path_missing_dir() {
     echo -e "This can make ${INFO}clawdbot${NC} show as \"command not found\" in new terminals."
     echo -e "Fix (zsh: ~/.zshrc, bash: ~/.bashrc):"
     echo -e "  export PATH=\"${dir}:\\$PATH\""
-    echo -e "Docs: ${INFO}https://docs.clawd.bot/install#nodejs--npm-path-sanity${NC}"
+    echo -e "Docs: ${INFO}https://docs.molt.bot/install#nodejs--npm-path-sanity${NC}"
 }
 
 ensure_npm_global_bin_on_path() {
@@ -769,7 +782,7 @@ maybe_nodenv_rehash() {
 warn_clawdbot_not_found() {
     echo -e "${WARN}→${NC} Installed, but ${INFO}clawdbot${NC} is not discoverable on PATH in this shell."
     echo -e "Try: ${INFO}hash -r${NC} (bash) or ${INFO}rehash${NC} (zsh), then retry."
-    echo -e "Docs: ${INFO}https://docs.clawd.bot/install#nodejs--npm-path-sanity${NC}"
+    echo -e "Docs: ${INFO}https://docs.molt.bot/install#nodejs--npm-path-sanity${NC}"
     local t=""
     t="$(type -t clawdbot 2>/dev/null || true)"
     if [[ "$t" == "alias" || "$t" == "function" ]]; then
@@ -837,7 +850,7 @@ install_clawdbot_from_git() {
     local repo_dir="$1"
     local repo_url="https://github.com/moltbot/moltbot.git"
 
-    echo -e "${WARN}→${NC} Installing Clawdbot from GitHub (${repo_url})..."
+    echo -e "${WARN}→${NC} Installing Moltbot from GitHub (${repo_url})..."
 
     if ! check_git; then
         install_git
@@ -874,11 +887,11 @@ set -euo pipefail
 exec node "${repo_dir}/dist/entry.js" "\$@"
 EOF
     chmod +x "$HOME/.local/bin/clawdbot"
-    echo -e "${SUCCESS}✓${NC} Clawdbot wrapper installed to \$HOME/.local/bin/clawdbot"
+    echo -e "${SUCCESS}✓${NC} Moltbot wrapper installed to \$HOME/.local/bin/clawdbot"
     echo -e "${INFO}i${NC} This checkout uses pnpm. For deps, run: ${INFO}pnpm install${NC} (avoid npm install in the repo)."
 }
 
-# Install Clawdbot
+# Install Moltbot
 resolve_beta_version() {
     local beta=""
     beta="$(npm view moltbot dist-tags.beta 2>/dev/null || true)"
@@ -910,9 +923,9 @@ install_clawdbot() {
     local resolved_version=""
     resolved_version="$(npm view "${package_name}@${CLAWDBOT_VERSION}" version 2>/dev/null || true)"
     if [[ -n "$resolved_version" ]]; then
-        echo -e "${WARN}→${NC} Installing Clawdbot ${INFO}${resolved_version}${NC}..."
+        echo -e "${WARN}→${NC} Installing Moltbot ${INFO}${resolved_version}${NC}..."
     else
-        echo -e "${WARN}→${NC} Installing Clawdbot (${INFO}${CLAWDBOT_VERSION}${NC})..."
+        echo -e "${WARN}→${NC} Installing Moltbot (${INFO}${CLAWDBOT_VERSION}${NC})..."
     fi
     local install_spec=""
     if [[ "${CLAWDBOT_VERSION}" == "latest" ]]; then
@@ -937,7 +950,7 @@ install_clawdbot() {
 
     ensure_clawdbot_bin_link || true
 
-    echo -e "${SUCCESS}✓${NC} Clawdbot installed"
+    echo -e "${SUCCESS}✓${NC} Moltbot installed"
 }
 
 # Run doctor for migrations (safe, non-interactive)
@@ -1057,12 +1070,12 @@ main() {
 
     if [[ -z "$INSTALL_METHOD" && -n "$detected_checkout" ]]; then
         if ! is_promptable; then
-            echo -e "${WARN}→${NC} Found a Clawdbot checkout, but no TTY; defaulting to npm install."
+            echo -e "${WARN}→${NC} Found a Moltbot checkout, but no TTY; defaulting to npm install."
             INSTALL_METHOD="npm"
         else
             local choice=""
             choice="$(prompt_choice "$(cat <<EOF
-${WARN}→${NC} Detected a Clawdbot source checkout in: ${INFO}${detected_checkout}${NC}
+${WARN}→${NC} Detected a Moltbot source checkout in: ${INFO}${detected_checkout}${NC}
 Choose install method:
   1) Update this checkout (git) and use it
   2) Install global via npm (migrate away from git)
@@ -1151,7 +1164,7 @@ EOF
         # Step 4: npm permissions (Linux)
         fix_npm_permissions
 
-        # Step 5: Clawdbot
+        # Step 5: Moltbot
         install_clawdbot
     fi
 
@@ -1186,9 +1199,9 @@ EOF
 
     echo ""
     if [[ -n "$installed_version" ]]; then
-        echo -e "${SUCCESS}${BOLD}🦞 Clawdbot installed successfully (${installed_version})!${NC}"
+        echo -e "${SUCCESS}${BOLD}🦞 Moltbot installed successfully (${installed_version})!${NC}"
     else
-        echo -e "${SUCCESS}${BOLD}🦞 Clawdbot installed successfully!${NC}"
+        echo -e "${SUCCESS}${BOLD}🦞 Moltbot installed successfully!${NC}"
     fi
     if [[ "$is_upgrade" == "true" ]]; then
         local update_messages=(
@@ -1239,7 +1252,7 @@ EOF
         echo -e "Source checkout: ${INFO}${final_git_dir}${NC}"
         echo -e "Wrapper: ${INFO}\$HOME/.local/bin/clawdbot${NC}"
         echo -e "Installed from source. To update later, run: ${INFO}clawdbot update --restart${NC}"
-        echo -e "Switch to global install later: ${INFO}curl -fsSL --proto '=https' --tlsv1.2 https://clawd.bot/install.sh | bash -s -- --install-method npm${NC}"
+        echo -e "Switch to global install later: ${INFO}curl -fsSL --proto '=https' --tlsv1.2 https://molt.bot/install.sh | bash -s -- --install-method npm${NC}"
     elif [[ "$is_upgrade" == "true" ]]; then
         echo -e "Upgrade complete."
         if [[ -r /dev/tty && -w /dev/tty ]]; then
@@ -1311,7 +1324,7 @@ EOF
     fi
 
     echo ""
-    echo -e "FAQ: ${INFO}https://docs.clawd.bot/start/faq${NC}"
+    echo -e "FAQ: ${INFO}https://docs.molt.bot/start/faq${NC}"
 }
 
 if [[ "${CLAWDBOT_INSTALL_SH_NO_RUN:-0}" != "1" ]]; then

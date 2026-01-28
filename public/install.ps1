@@ -1,6 +1,6 @@
-# Clawdbot Installer for Windows
-# Usage: iwr -useb https://clawd.bot/install.ps1 | iex
-#        & ([scriptblock]::Create((iwr -useb https://clawd.bot/install.ps1))) -Tag beta -NoOnboard -DryRun
+# Moltbot Installer for Windows
+# Usage: iwr -useb https://molt.bot/install.ps1 | iex
+#        & ([scriptblock]::Create((iwr -useb https://molt.bot/install.ps1))) -Tag beta -NoOnboard -DryRun
 
 param(
     [string]$Tag = "latest",
@@ -15,7 +15,7 @@ param(
 $ErrorActionPreference = "Stop"
 
 Write-Host ""
-Write-Host "  Clawdbot Installer" -ForegroundColor Cyan
+Write-Host "  Moltbot Installer" -ForegroundColor Cyan
 Write-Host ""
 
 # Check if running in PowerShell
@@ -123,11 +123,11 @@ function Install-Node {
     exit 1
 }
 
-# Check for existing Clawdbot installation
-function Check-ExistingClawdbot {
+# Check for existing Moltbot installation
+function Check-ExistingMoltbot {
     try {
         $null = Get-Command clawdbot -ErrorAction Stop
-    Write-Host "[*] Existing Clawdbot installation detected" -ForegroundColor Yellow
+    Write-Host "[*] Existing Moltbot installation detected" -ForegroundColor Yellow
     return $true
     } catch {
         return $false
@@ -153,7 +153,7 @@ function Require-Git {
     exit 1
 }
 
-function Ensure-ClawdbotOnPath {
+function Ensure-MoltbotOnPath {
     if (Get-Command clawdbot -ErrorAction SilentlyContinue) {
         return $true
     }
@@ -209,12 +209,12 @@ function Ensure-Pnpm {
     Write-Host "[OK] pnpm installed" -ForegroundColor Green
 }
 
-# Install Clawdbot
-function Install-Clawdbot {
+# Install Moltbot
+function Install-Moltbot {
     if ([string]::IsNullOrWhiteSpace($Tag)) {
         $Tag = "latest"
     }
-    Write-Host "[*] Installing Clawdbot@$Tag..." -ForegroundColor Yellow
+    Write-Host "[*] Installing Moltbot@$Tag..." -ForegroundColor Yellow
     $prevLogLevel = $env:NPM_CONFIG_LOGLEVEL
     $prevUpdateNotifier = $env:NPM_CONFIG_UPDATE_NOTIFIER
     $prevFund = $env:NPM_CONFIG_FUND
@@ -233,7 +233,7 @@ function Install-Clawdbot {
                 Write-Host "  https://git-scm.com/download/win" -ForegroundColor Cyan
             } else {
                 Write-Host "Re-run with verbose output to see the full error:" -ForegroundColor Yellow
-                Write-Host "  iwr -useb https://clawd.bot/install.ps1 | iex" -ForegroundColor Cyan
+                Write-Host "  iwr -useb https://molt.bot/install.ps1 | iex" -ForegroundColor Cyan
             }
             $npmOutput | ForEach-Object { Write-Host $_ }
             exit 1
@@ -244,11 +244,11 @@ function Install-Clawdbot {
         $env:NPM_CONFIG_FUND = $prevFund
         $env:NPM_CONFIG_AUDIT = $prevAudit
     }
-    Write-Host "[OK] Clawdbot installed" -ForegroundColor Green
+    Write-Host "[OK] Moltbot installed" -ForegroundColor Green
 }
 
-# Install Clawdbot from GitHub
-function Install-ClawdbotFromGit {
+# Install Moltbot from GitHub
+function Install-MoltbotFromGit {
     param(
         [string]$RepoDir,
         [switch]$SkipUpdate
@@ -257,7 +257,7 @@ function Install-ClawdbotFromGit {
     Ensure-Pnpm
 
     $repoUrl = "https://github.com/clawdbot/clawdbot.git"
-    Write-Host "[*] Installing Clawdbot from GitHub ($repoUrl)..." -ForegroundColor Yellow
+    Write-Host "[*] Installing Moltbot from GitHub ($repoUrl)..." -ForegroundColor Yellow
 
     if (-not (Test-Path $RepoDir)) {
         git clone $repoUrl $RepoDir
@@ -296,7 +296,7 @@ function Install-ClawdbotFromGit {
         Write-Host "[!] Added $binDir to user PATH (restart terminal if command not found)" -ForegroundColor Yellow
     }
 
-    Write-Host "[OK] Clawdbot wrapper installed to $cmdPath" -ForegroundColor Green
+    Write-Host "[OK] Moltbot wrapper installed to $cmdPath" -ForegroundColor Green
     Write-Host "[i] This checkout uses pnpm. For deps, run: pnpm install (avoid npm install in the repo)." -ForegroundColor Gray
 }
 
@@ -360,7 +360,7 @@ function Main {
     Remove-LegacySubmodule -RepoDir $RepoDir
 
     # Check for existing installation
-    $isUpgrade = Check-ExistingClawdbot
+    $isUpgrade = Check-ExistingMoltbot
 
     # Step 1: Node.js
     if (-not (Check-Node)) {
@@ -377,16 +377,16 @@ function Main {
 
     $finalGitDir = $null
 
-    # Step 2: Clawdbot
+    # Step 2: Moltbot
     if ($InstallMethod -eq "git") {
         $finalGitDir = $GitDir
-        Install-ClawdbotFromGit -RepoDir $GitDir -SkipUpdate:$NoGitUpdate
+        Install-MoltbotFromGit -RepoDir $GitDir -SkipUpdate:$NoGitUpdate
     } else {
-        Install-Clawdbot
+        Install-Moltbot
     }
 
-    if (-not (Ensure-ClawdbotOnPath)) {
-        Write-Host "Install completed, but Clawdbot is not on PATH yet." -ForegroundColor Yellow
+    if (-not (Ensure-MoltbotOnPath)) {
+        Write-Host "Install completed, but Moltbot is not on PATH yet." -ForegroundColor Yellow
         Write-Host "Open a new terminal, then run: clawdbot doctor" -ForegroundColor Cyan
         return
     }
@@ -415,9 +415,9 @@ function Main {
 
     Write-Host ""
     if ($installedVersion) {
-        Write-Host "Clawdbot installed successfully ($installedVersion)!" -ForegroundColor Green
+        Write-Host "Moltbot installed successfully ($installedVersion)!" -ForegroundColor Green
     } else {
-        Write-Host "Clawdbot installed successfully!" -ForegroundColor Green
+        Write-Host "Moltbot installed successfully!" -ForegroundColor Green
     }
     Write-Host ""
     if ($isUpgrade) {

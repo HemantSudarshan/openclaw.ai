@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Clawdbot CLI installer (non-interactive, no onboarding)
-# Usage: curl -fsSL --proto '=https' --tlsv1.2 https://clawd.bot/install-cli.sh | bash -s -- [--json] [--prefix <path>] [--version <ver>] [--node-version <ver>] [--onboard]
+# Moltbot CLI installer (non-interactive, no onboarding)
+# Usage: curl -fsSL --proto '=https' --tlsv1.2 https://molt.bot/install-cli.sh | bash -s -- [--json] [--prefix <path>] [--version <ver>] [--node-version <ver>] [--onboard]
 
 PREFIX="${CLAWDBOT_PREFIX:-${HOME}/.clawdbot}"
 CLAWDBOT_VERSION="${CLAWDBOT_VERSION:-latest}"
@@ -18,7 +18,7 @@ print_usage() {
 Usage: install-cli.sh [options]
   --json                Emit NDJSON events (no human output)
   --prefix <path>        Install prefix (default: ~/.clawdbot)
-  --version <ver>        Clawdbot version (default: latest)
+  --version <ver>        Moltbot version (default: latest)
   --node-version <ver>   Node version (default: 22.22.0)
   --onboard              Run "clawdbot onboard" after install
   --no-onboard           Skip onboarding (default)
@@ -350,7 +350,7 @@ install_clawdbot() {
     --no-audit
   )
   emit_json "{\"event\":\"step\",\"name\":\"clawdbot\",\"status\":\"start\",\"version\":\"${requested}\"}"
-  log "Installing Clawdbot (${requested})..."
+  log "Installing Moltbot (${requested})..."
   if [[ "$SET_NPM_PREFIX" -eq 1 ]]; then
     fix_npm_prefix_if_needed
   fi
@@ -407,10 +407,10 @@ main() {
   installed_version="$(resolve_clawdbot_version)"
   if [[ -n "$installed_version" ]]; then
     emit_json "{\"event\":\"done\",\"ok\":true,\"version\":\"${installed_version//\"/\\\"}\"}"
-    log "Clawdbot installed (${installed_version})."
+    log "Moltbot installed (${installed_version})."
   else
     emit_json "{\"event\":\"done\",\"ok\":true}"
-    log "Clawdbot installed."
+    log "Moltbot installed."
   fi
 
   if [[ "$RUN_ONBOARD" -eq 1 ]]; then
