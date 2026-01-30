@@ -31,8 +31,6 @@ OpenClaw is an open agent platform that runs on your machine and works from the 
 
 **Your assistant. Your machine. Your rules.**
 
-OpenClaw is currently in beta—expect rough edges, but also rapid iteration.
-
 Unlike SaaS assistants where your data lives on someone else's servers, OpenClaw runs where you choose—laptop, homelab, or VPS. Your infrastructure. Your keys. Your data.
 
 ## What's New in This Release
