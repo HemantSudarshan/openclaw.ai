@@ -551,9 +551,12 @@ const duration2 = (row2.length / 2 * pixelsPerItem) / pixelsPerSecond;
               textArea.style.position = 'fixed';
               textArea.style.opacity = '0';
               document.body.appendChild(textArea);
-              textArea.select();
-              success = document.execCommand('copy');
-              document.body.removeChild(textArea);
+              try {
+                textArea.select();
+                success = document.execCommand('copy');
+              } finally {
+                textArea.remove();
+              }
             }
           } catch (err) {
             console.error('Failed to copy:', err);
