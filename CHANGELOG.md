@@ -8,6 +8,7 @@
 - Installer: auto-detect missing native build toolchain from npm logs, attempt OS-specific install, and retry package install instead of failing early (#49, thanks @knocte).
 - Installer: render gum choose header on two lines (real newline, not literal `\n`) for checkout detection prompt (#55, thanks @echoja).
 - Showcase: switch to masonry-style multi-column layout with cross-browser card split protection (#42, thanks @reidsolon).
+- Links: update ClawHub URLs from `clawhub.com` to `clawhub.ai` across landing, integrations, and showcase pages (#28, thanks @bchelli).
 
 ## 2026-02-10
 
