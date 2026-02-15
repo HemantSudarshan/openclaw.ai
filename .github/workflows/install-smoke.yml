@@ -14,7 +14,7 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
     steps:
       - name: Checkout
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
 
       - name: install.sh dry run
         if: runner.os != 'Windows'
@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
 
       - name: Install ShellCheck
         run: sudo apt-get update -y && sudo apt-get install -y shellcheck
@@ -46,7 +46,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
 
       - name: Unit tests (install.sh)
         run: bash scripts/test-install-sh-unit.sh
@@ -55,7 +55,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout installer
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
 
       - name: Build smoke image (root)
         run: docker build -t clawdbot-install-smoke:ci -f scripts/docker/install-sh-smoke/Dockerfile .
@@ -75,3 +75,30 @@ jobs:
           docker run --rm -t \
             -e CLAWDBOT_NO_ONBOARD \
             clawdbot-install-nonroot:ci
+
+  install-sh-git-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout installer
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
+
+      - name: Build git smoke image (install.sh)
+        run: docker build -t clawdbot-install-git-smoke:ci -f scripts/docker/install-sh-git-smoke/Dockerfile .
+
+      - name: Run git smoke (install.sh)
+        env:
+          CLAWDBOT_NO_ONBOARD: "1"
+          CLAWDBOT_NO_PROMPT: "1"
+        run: docker run --rm -t -e CLAWDBOT_NO_ONBOARD -e CLAWDBOT_NO_PROMPT clawdbot-install-git-smoke:ci
+
+  install-cli-git-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout installer
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
+
+      - name: Build git smoke image (install-cli.sh)
+        run: docker build -t openclaw-install-cli-git-smoke:ci -f scripts/docker/install-cli-git-smoke/Dockerfile .
+
+      - name: Run git smoke (install-cli.sh)
+        run: docker run --rm -t openclaw-install-cli-git-smoke:ci

@@ -1,9 +1,10 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { getCollection, render } from 'astro:content';
+import { render } from 'astro:content';
+import { getPublishedBlogPosts } from '../../lib/blog';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog');
+  const posts = await getPublishedBlogPosts();
   return posts.map((post) => ({
     params: { slug: post.slug },
     props: { post },
@@ -12,6 +13,14 @@ export async function getStaticPaths() {
 
 const { post } = Astro.props;
 const { Content } = await render(post);
+
+// Normalize authors - support both legacy single author and new multi-author format
+type Author = { name: string; handle: string };
+const authors: Author[] = post.data.authors
+  ? post.data.authors
+  : post.data.author && post.data.authorHandle
+    ? [{ name: post.data.author, handle: post.data.authorHandle }]
+    : [];
 
 function formatDate(date: Date): string {
   return date.toLocaleDateString('en-US', {
@@ -48,17 +57,21 @@ const postUrl = `https://openclaw.ai/blog/${post.slug}`;
         )}
 
         <div class="article-meta">
-          <div class="author-info">
-            <img
-              src={`https://unavatar.io/x/${post.data.authorHandle}`}
-              alt={post.data.author}
-              class="author-avatar"
-              loading="lazy"
-            />
-            <div class="author-details">
-              <span class="author-name">{post.data.author}</span>
-              <a href={`https://x.com/${post.data.authorHandle}`} class="author-handle" target="_blank" rel="noopener">@{post.data.authorHandle}</a>
-            </div>
+          <div class="authors-container">
+            {authors.map((author) => (
+              <div class="author-info">
+                <img
+                  src={`https://unavatar.io/x/${author.handle}`}
+                  alt={author.name}
+                  class="author-avatar"
+                  loading="lazy"
+                />
+                <div class="author-details">
+                  <span class="author-name">{author.name}</span>
+                  <a href={`https://x.com/${author.handle}`} class="author-handle" target="_blank" rel="noopener">@{author.handle}</a>
+                </div>
+              </div>
+            ))}
           </div>
           <div class="meta-right">
             <span class="post-date">{formatDate(post.data.date)}</span>
@@ -105,6 +118,8 @@ const postUrl = `https://openclaw.ai/blog/${post.slug}`;
         <a href="/showcase">Showcase</a>
         <span class="footer-separator">·</span>
         <a href="/shoutouts">Shoutouts</a>
+        <span class="footer-separator">·</span>
+        <a href="https://trust.openclaw.ai/">Trust</a>
       </nav>
       <p>Built by <a href="https://molty.me" target="_blank" rel="noopener">Molty</a> 🦞</p>
     </footer>
@@ -211,8 +226,14 @@ const postUrl = `https://openclaw.ai/blog/${post.slug}`;
     gap: 16px;
     padding: 20px;
     border-radius: 12px;
-    background: rgba(10, 15, 26, 0.7);
+    background: var(--surface-card-strong);
     border: 1px solid var(--border-subtle);
+  }
+
+  .authors-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
   }
 
   .author-info {
@@ -402,13 +423,13 @@ const postUrl = `https://openclaw.ai/blog/${post.slug}`;
   }
 
   .share-x {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--surface-interactive);
     color: var(--text-primary);
     border: 1px solid var(--border-subtle);
   }
 
   .share-x:hover {
-    background: rgba(255, 255, 255, 0.15);
+    background: var(--surface-interactive-hover);
     border-color: var(--text-secondary);
   }
 
@@ -425,7 +446,7 @@ const postUrl = `https://openclaw.ai/blog/${post.slug}`;
   .cta-box {
     padding: 32px;
     border-radius: 16px;
-    background: linear-gradient(135deg, rgba(255, 77, 77, 0.08) 0%, rgba(10, 15, 26, 0.9) 50%, rgba(0, 229, 204, 0.05) 100%);
+    background: var(--newsletter-gradient);
     border: 1px solid var(--border-accent);
     text-align: center;
   }
@@ -468,7 +489,7 @@ const postUrl = `https://openclaw.ai/blog/${post.slug}`;
     font-weight: 600;
     text-decoration: none;
     transition: all 0.2s ease;
-    box-shadow: 0 4px 20px rgba(255, 77, 77, 0.3);
+    box-shadow: 0 4px 20px var(--shadow-coral-mid);
   }
 
   .cta-btn:hover {
